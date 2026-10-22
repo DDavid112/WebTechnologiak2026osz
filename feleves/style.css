@@ -1,0 +1,223 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Outfit', Arial, sans-serif;
+    background: white;
+    color: #1c2233;
+    min-height: 100vh;
+    line-height: 1.5;
+    font-size: 16px;
+}
+
+a { color: #1c2233; text-decoration: underline; }
+a:hover { color: #b8860b; }
+a:visited { color: #4b5563; }
+a:focus-visible, button:focus-visible { outline: 3px solid #f5c518; outline-offset: 2px; }
+
+.navbar {
+    background: #1c2233;
+    padding: 0 24px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    gap: 35px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+.menu { display: flex; list-style: none; gap: 8px; }
+.menu a,
+.menu a:visited {
+    color: #e5e7eb;
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: background 0.2s, color 0.2s;
+}
+.menu a:hover { background: #f5c518; color: #1c2233; }
+.navbar-right { margin-left: auto; }
+.hidden { display: none; }
+
+.login-container {
+    min-height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 20px;
+}
+.login-title { font-size: 4rem; font-weight: 700; margin-bottom: 8px; text-align: center; }
+.bemutato-card { padding: 7px 57px; max-width: 923px; }
+.login-card {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 48px 40px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.13);
+}
+.login-card img { max-width: 160px; margin-bottom: 12px; }
+
+#start-btn,
+#start-btn:visited {
+    display: inline-block;
+    background: #f5c518;
+    color: #1c2233;
+    border-radius: 6px;
+    padding: 10px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    margin-top: 12px;
+}
+#start-btn:hover { background: #d4a910; color: #1c2233; }
+
+.btn, .btn-edt, .btn-trl, .header-btn, .header-btnred {
+    position: relative;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s;
+}
+.btn { background: #f5c518; color: #1c2233; }
+.btn:hover { background: #d4a910; color: #1c2233; }
+.btn-edt, .btn-edt:visited { background: #6b7280; color: #e5e7eb; }
+.btn-edt:hover { background: #4b5563; color: #ffffff; }
+.btn-trl { background: #dc2626; color: #f4f5f7; }
+.btn-trl:hover { background: #b91c1c; }
+.header-btn, .header-btn:visited { background: #22c55e; color: #1c2233; }
+.header-btn:hover { background: #16a34a; color: #1c2233; }
+.header-btnred, .header-btnred:visited { background: #ef4444; color: #f4f5f7; }
+.header-btnred:hover { background: #dc2626; color: #ffffff; }
+.button_text{
+    font: bold 'Quicksand', san-serif;
+    color: black;
+    transition: all 0.2s;
+}
+.button--loading .button_text{
+    visibility: hidden;
+    opacity: 0;
+}
+.button--loading::after{
+    content: "";
+    position: absolute;
+    width: 21px;
+    height: 21px;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    margin: auto;
+    border: 5px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: button-loading-spinner 1s ease infinite;
+}
+
+@keyframes button-loading-spinner {
+    from{
+        transform: rotate(0turn);
+    }
+    to{
+        transform: rotate(1turn);
+    }
+}
+
+
+.header { display: flex; justify-content: space-between; align-items: center; padding: 20px; flex-wrap: wrap; gap: 10px; }
+.cars-title { font-size: 50px; padding: 20px; }
+
+.table-wrap { overflow-x: auto; padding: 0 20px 40px; }
+.car-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.13);
+}
+.car-table caption { text-align: left; padding: 8px 0; color: #6b7280; font-size: 0.9rem; }
+.car-table th {
+    background: #1c2233;
+    color: #f5c518;
+    text-align: left;
+    padding: 12px 16px;
+}
+.car-table td { padding: 12px 16px; border-bottom: 1px solid #e5e7eb; }
+.car-table tbody tr:nth-child(even) { background: #f9fafb; }
+.car-table tbody tr:hover { background: #fff8d6; }
+.color-dot {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1px solid #9ca3af;
+    vertical-align: middle;
+}
+
+#car-detail {
+    max-width: 600px;
+    margin: 40px auto;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.13);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.car-detail-header { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+.car-id { font-size: 1.3rem; color: #6b7280; font-weight: 600; padding: 15px; }
+.car-detail-grid { display: contents; }
+.car-detail-item { display: flex; flex-direction: column; gap: 4px; background: #f4f5f7; padding: 12px 16px; }
+.car-detail-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #6b7280; }
+.car-detail-value { font-size: 1rem; font-weight: 500; }
+.btn-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+
+@media (max-width: 700px) {
+    .login-title { font-size: 2.4rem; }
+    .cars-title { font-size: 32px; padding: 10px; }
+    .bemutato-card { padding: 7px 16px; }
+}
+
+.intro{
+    position: fixed;
+    z-index: 1;
+    left: 0%;
+    top: 0%;
+    width: 100%;
+    height: 100vh;
+    background-color: #161616;
+    transition: 2s;
+}
+.logo-header{
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: (translate(-50%, -50%));
+    color: #ffffff;
+}
+.logo{
+    position: relative;
+    display: inline-block;
+    bottom: -20px;
+    opacity: 0;
+}
+.logo.active{
+    bottom: 0;
+    opacity: 1;
+    transition: ease-in-out 0.7s;
+}
+.logo.fade{
+    bottom: 150px;
+    opacity: 0;
+    transition: ease-in-out 0.7s;
+}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxiReg - Autó részletei</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="car-detail"></div>
+    <script src="app.js"></script>
+    <script>
+
+        const id = new URLSearchParams(window.location.search).get('id');
+        if (!id) {
+            alert("Nincs autó kiválasztva.");
+            window.location.href = 'cars.html';
+        }
+
+        getCarDetails(id).then(car => {
+            document.getElementById('car-detail').innerHTML = `
+    <div class="car-detail-header">
+        <span class="car-id">#${car.id}</span>
+        <h1>${esc(car.brand)} ${esc(car.model)}</h1>
+        <a class="btn-edt" href="editcar.html?id=${car.id}">Módosítás</a>
+    </div>
+    <div class="car-detail-grid">
+        <div class="car-detail-item">
+            <span class="car-detail-label">Tulajdonos</span>
+            <span class="car-detail-value">${esc(car.owner)}</span>
+        </div>
+        <div class="car-detail-item">
+            <span class="car-detail-label">Üzembe helyezés ideje</span>
+            <span class="car-detail-value">${esc(car.dayOfCommission)}</span>
+        </div>
+        <div class="car-detail-item">
+            <span class="car-detail-label">Fogyasztás</span>
+            <span class="car-detail-value">${car.electric ? 'Elektromos' : Math.round(car.fuelUse * 10) / 10 + ' l/100km'}</span>
+        </div>
+        <div class="car-detail-item">
+            <span class="car-detail-label">Hajtás</span>
+            <span class="car-detail-value">${car.electric ? 'Elektromos' : 'Benzin/Dízel'}</span>
+        </div>
+        <div class="car-detail-item">
+            <span class="car-detail-label">Szín</span>
+            <span class="car-detail-value"><span class="color-dot" style="background:${esc(car.color || '#cccccc')};"></span> ${esc(car.color || '')}</span>
+        </div>
+        <div class="car-detail-item">
+            <span class="car-detail-label">Klíma</span>
+            <span class="car-detail-value">${car.airCon ? 'Van' : 'Nincs'}</span>
+        </div>
+        <div class="car-detail-item">
+            <span class="car-detail-label">Megjegyzés</span>
+            <span class="car-detail-value">${car.note ? esc(car.note) : '–'}</span>
+        </div>
+    </div>
+    <div class="btn-row">
+        <a class="btn" href="cars.html">← Vissza</a>
+        <button class="btn-trl" onclick="handleDelete()">Törlés</button>
+    </div>`;
+        }).catch(err => {
+            alert('Hiba: ' + err.message);
+            window.location.href = 'cars.html';
+        });
+
+        function handleDelete() {
+            if (!confirm('Biztosan törölni szeretnéd ezt az autót?')) return;
+            deleteCar(id)
+                .then(() => {
+                    alert('Autó sikeresen törölve!');
+                    window.location.href = 'cars.html';
+                })
+                .catch(err => alert('Hiba történt a törlés során: ' + err.message));
+        }
+    </script>
+</body>
+</html>

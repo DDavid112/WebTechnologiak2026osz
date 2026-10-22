@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxiReg - Autó szerkesztése</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="form.css">
+</head>
+<body>
+<div class="header">
+    <h1 class="cars-title">Autó szerkesztése</h1>
+    <a id="back-btn" href="cars.html" class="header-btnred">← Vissza</a>
+</div>
+
+<form class="form" novalidate id="editForm">
+    <div class="form-group">
+        <label for="brand2">Márka</label>
+        <select id="brand2"></select>
+    </div>
+    <div class="form-group">
+        <label for="model2">Modell</label>
+        <input id="model2" type="text">
+        <span class="field-error" id="err-model2" role="alert"></span>
+    </div>
+    <div class="form-group">
+        <label for="owner2">Tulajdonos</label>
+        <input type="text" id="owner2" placeholder="Vezetéknév Keresztnév">
+        <span class="field-error" id="err-owner2" role="alert"></span>
+    </div>
+    <div class="form-group">
+        <label for="date2">Üzembe helyezés</label>
+        <input type="date" id="date2">
+        <span class="field-error" id="err-date2" role="alert"></span>
+    </div>
+    <div class="form-group">
+        <label>Energiaforrás</label>
+        <div class="inline-options">
+            <label><input type="radio" name="fuel2" value="fuel" checked> Benzin/Dízel</label>
+            <label><input type="radio" name="fuel2" value="electric"> Elektromos</label>
+        </div>
+    </div>
+    <div class="form-group" id="fuelUseGroup2">
+        <label for="fuelUse2">Fogyasztás (l/100km)</label>
+        <input type="number" id="fuelUse2" min="0" step="0.1">
+        <span class="field-error" id="err-fuelUse2" role="alert"></span>
+    </div>
+    <div class="form-group">
+        <label for="color2">Az autó színe</label>
+        <input type="color" id="color2" value="#f5c518">
+    </div>
+    <div class="form-group">
+        <label class="check-label"><input type="checkbox" id="airCon2"> Van légkondicionáló</label>
+    </div>
+    <div class="form-group">
+        <label for="note2">Megjegyzés</label>
+        <textarea id="note2" rows="4" placeholder="Pl. különleges felszereltség, állapot..."></textarea>
+        <span class="field-error" id="err-note2" role="alert"></span>
+    </div>
+    <button type="submit" class="btn">
+        <span class="button_text">Mentés</span>
+    </button>
+</form>
+
+<script src="app.js"></script>
+<script>
+
+    const carId = new URLSearchParams(window.location.search).get('id');
+    if (!carId) {
+        alert("Nincs autó kiválasztva.");
+        window.location.href = 'cars.html';
+    }
+    document.getElementById('back-btn').href = 'car.html?id=' + carId;
+
+    fillBrandSelect('brand2');
+
+    function readForm() {
+        const electric = document.querySelector('input[name="fuel2"]:checked').value === 'electric';
+        return {
+            brand: document.getElementById('brand2').value,
+            model: document.getElementById('model2').value.trim(),
+            owner: document.getElementById('owner2').value.trim(),
+            dayOfCommission: document.getElementById('date2').value,
+            electric: electric,
+            fuelUse: electric ? 0 : parseFloat(document.getElementById('fuelUse2').value),
+            color: document.getElementById('color2').value,
+            airCon: document.getElementById('airCon2').checked,
+            note: document.getElementById('note2').value.trim()
+        };
+    }
+
+    function toggleFuelUse() {
+        const electric = document.querySelector('input[name="fuel2"]:checked').value === 'electric';
+        document.getElementById('fuelUseGroup2').style.display = electric ? 'none' : '';
+        if (electric) {
+            document.getElementById('fuelUse2').value = '';
+            setFieldError('fuelUse', '2', '');
+        }
+    }
+
+    document.querySelectorAll('input[name="fuel2"]').forEach(r => r.addEventListener('change', toggleFuelUse));
+    enableLiveValidation(readForm, '2');
+
+    getCarDetails(carId)
+        .then(car => {
+            document.getElementById('brand2').value = car.brand;
+            document.getElementById('model2').value = car.model;
+            document.getElementById('owner2').value = car.owner;
+            document.getElementById('date2').value = car.dayOfCommission ? car.dayOfCommission.substring(0, 10) : '';
+            document.querySelector('input[name="fuel2"][value="' + (car.electric ? 'electric' : 'fuel') + '"]').checked = true;
+            document.getElementById('fuelUse2').value = car.electric ? '' : car.fuelUse;
+            document.getElementById('color2').value = car.color || '#f5c518';
+            document.getElementById('airCon2').checked = !!car.airCon;
+            document.getElementById('note2').value = car.note || '';
+            toggleFuelUse();
+        })
+        .catch(err => {
+            alert('Hiba: ' + err.message);
+            window.location.href = 'cars.html';
+        });
+
+   document.getElementById('editForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const car = readForm();
+    if (!showFieldErrors(validateCar(car), '2')) return;
+
+    const btn = this.querySelector('button.btn');
+    btn.classList.add('button--loading');
+    btn.disabled = true;
+
+    const wait = new Promise(resolve => setTimeout(resolve, 1000));
+
+    Promise.all([updateCar(carId, car), wait])
+        .then(() => {
+            btn.classList.remove('button--loading');
+            alert('Autó sikeresen módosítva!');
+            window.location.href = 'car.html?id=' + carId;
+        })
+        .catch(err => {
+            btn.classList.remove('button--loading');
+            btn.disabled = false;
+            alert('Hiba történt a mentés során: ' + err.message);
+        });
+
+   });
+</script>   
+</body>
+</html>

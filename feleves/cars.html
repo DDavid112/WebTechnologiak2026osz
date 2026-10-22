@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxiReg - Autók</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        #summary { padding: 0 20px 12px 40px; color: #6b7280; }
+        .empty { padding: 20px; color: #6b7280; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1 class="cars-title">Jelenlegi flottánk</h1>
+    <a href="add-car.html" class="header-btn">+ Autó hozzáadása</a>
+</div>
+
+<p id="summary"></p>
+
+<div class="table-wrap">
+    <table class="car-table">
+        <caption>A flotta autói</caption>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Tulajdonos</th>
+                <th>Autó</th>
+                <th>Szín</th>
+                <th>Fogyasztás</th>
+                <th>Részletek</th>
+            </tr>
+        </thead>
+        <tbody id="car-list"></tbody>
+    </table>
+</div>
+
+<script src="app.js"></script>
+<script>
+
+    getCars().then(cars => {
+        const list = document.getElementById("car-list");
+        document.getElementById("summary").textContent = cars.length + ' autó a flottában, ebből elektromos: ' + cars.filter(c => c.electric).length;
+
+        if (cars.length === 0) {
+            list.innerHTML = '<tr><td colspan="6" class="empty">Még nincs egyetlen autó sem a flottában. Add hozzá az elsőt!</td></tr>';
+            return;
+        }
+        cars.forEach(car => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${car.id}</td>
+                <td>${esc(car.owner)}</td>
+                <td>${esc(car.brand)} ${esc(car.model)}</td>
+                <td><span class="color-dot" style="background:${esc(car.color || '#cccccc')};"></span></td>
+                <td>${car.electric ? 'Elektromos' : Math.round(car.fuelUse * 10) / 10 + ' l/100km'}</td>
+                <td><a href="car.html?id=${car.id}" class="btn">Részletek →</a></td>`;
+            list.appendChild(row);
+        });
+    });
+</script>
+</body>
+</html>

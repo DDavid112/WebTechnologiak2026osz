@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxiReg - Új autó hozzáadása</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="form.css">
+</head>
+<body>
+<div class="header">
+    <h1 class="cars-title">Új autó hozzáadása</h1>
+    <a href="cars.html" class="header-btnred">Mégse</a>
+</div>
+
+<form class="form" novalidate id="form">
+    <div class="form-group">
+        <label for="brand">Márka</label>
+        <select id="brand"></select>
+    </div>
+    <div class="form-group">
+        <label for="model">Modell</label>
+        <input id="model" type="text">
+        <span class="field-error" id="err-model" role="alert"></span>
+    </div>
+    <div class="form-group">
+        <label for="owner">Tulajdonos</label>
+        <input type="text" id="owner" placeholder="Vezetéknév Keresztnév">
+        <span class="field-error" id="err-owner" role="alert"></span>
+    </div>
+    <div class="form-group">
+        <label for="date">Üzembe helyezés</label>
+        <input type="date" id="date">
+        <span class="field-error" id="err-date" role="alert"></span>
+    </div>
+    <div class="form-group">
+        <label>Energiaforrás</label>
+        <div class="inline-options">
+            <label><input type="radio" name="fuel" value="fuel" checked> Benzin/Dízel</label>
+            <label><input type="radio" name="fuel" value="electric"> Elektromos</label>
+        </div>
+    </div>
+    <div class="form-group" id="fuelUseGroup">
+        <label for="fuelUse">Fogyasztás (l/100km)</label>
+        <input type="number" id="fuelUse" min="0" step="0.1">
+        <span class="field-error" id="err-fuelUse" role="alert"></span>
+    </div>
+    <div class="form-group">
+        <label for="color">Az autó színe</label>
+        <input type="color" id="color" value="#f5c518">
+    </div>
+    <div class="form-group">
+        <label class="check-label"><input type="checkbox" id="airCon"> Van légkondicionáló</label>
+    </div>
+    <div class="form-group">
+        <label for="note">Megjegyzés</label>
+        <textarea id="note" rows="4" placeholder="Pl. különleges felszereltség, állapot..."></textarea>
+        <span class="field-error" id="err-note" role="alert"></span>
+    </div>
+    <button type="submit" class="btn">
+        <span class="button_text">Mentés</span>
+    </button>
+</form>
+
+<script src="app.js"></script>
+<script>
+
+    fillBrandSelect('brand');
+
+    function readForm() {
+        const electric = document.querySelector('input[name="fuel"]:checked').value === 'electric';
+        return {
+            brand: document.getElementById('brand').value,
+            model: document.getElementById('model').value.trim(),
+            owner: document.getElementById('owner').value.trim(),
+            dayOfCommission: document.getElementById('date').value,
+            electric: electric,
+            fuelUse: electric ? 0 : parseFloat(document.getElementById('fuelUse').value),
+            color: document.getElementById('color').value,
+            airCon: document.getElementById('airCon').checked,
+            note: document.getElementById('note').value.trim()
+        };
+    }
+
+    function toggleFuelUse() {
+        const electric = document.querySelector('input[name="fuel"]:checked').value === 'electric';
+        document.getElementById('fuelUseGroup').style.display = electric ? 'none' : '';
+        if (electric) {
+            document.getElementById('fuelUse').value = '';
+            setFieldError('fuelUse', '', '');
+        }
+    }
+
+    document.querySelectorAll('input[name="fuel"]').forEach(r => r.addEventListener('change', toggleFuelUse));
+    enableLiveValidation(readForm, '');
+
+    document.getElementById('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const car = readForm();
+    if (!showFieldErrors(validateCar(car), '')) return;
+
+    const btn = this.querySelector('button.btn');
+    btn.classList.add('button--loading');
+    btn.disabled = true;
+
+    const wait = new Promise(resolve => setTimeout(resolve, 1000));
+
+    Promise.all([createCar(car), wait])
+        .then(() => {
+            btn.classList.remove('button--loading');
+            alert('Autó sikeresen létrehozva!');
+            window.location.href = 'cars.html';
+        })
+        .catch(err => {
+            btn.classList.remove('button--loading');
+            btn.disabled = false;
+            alert('Hiba: ' + err.message);
+        });
+});
+</script>
+</body>
+</html>
