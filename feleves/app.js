@@ -186,4 +186,24 @@ window.addEventListener('DOMContentLoaded', ()=>{
                 intro.style.top = '-100vh';
             }, 2300);
         });    
-})
+});
+
+(function () {
+    const targets = document.querySelectorAll('.reviews-head, .review-card');
+    if (!targets.length || !('IntersectionObserver' in window)) return;
+
+    targets.forEach(el => el.classList.add('reveal'));
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            const el = entry.target;
+            const index = Array.from(el.parentElement.children).indexOf(el);
+            el.style.transitionDelay = (index % 2) * 120 + 'ms';
+            el.classList.add('show');
+            observer.unobserve(el);
+        });
+    }, { threshold: 0.2 });
+
+    targets.forEach(el => observer.observe(el));
+})();
